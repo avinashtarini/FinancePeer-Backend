@@ -42,9 +42,11 @@ app.post("/signup/", async (request, response) => {
     const createUser = `INSERT INTO user(username,password,name,gender) VALUES ('${username}','${maskedPassword}','${name}','${gender}');`;
     const dbResponse = await db.run(createUser);
     const newUserId = dbResponse.lastID;
-    response.send(`USER CREATED WITH USERNAME:${username}`);
+    response.status(200);
+    response.send({ success_msg: `USER CREATED WITH USERNAME:${username}` });
   } else {
-    response.send("Username Already exists");
+    response.send(400);
+    response.send({ error_msg: "Username Already exists" });
   }
 });
 
@@ -87,15 +89,15 @@ app.post("/upload/", async (request, response) => {
     dbResponse = await db.run(sqlInsertQuery);
   });
   response.status(200);
-  response.send("File Uploaded Successfully");
+  response.send({ success_msg: "File Uploaded Successfully" });
 });
 
 //GetData
 app.get("/display/", async (request, response) => {
   const sqlGetQuery = `SELECT * FROM user_files`;
-  const afterResponse = await db.all(sqlGetQuery);
+  const afterResponseData = await db.all(sqlGetQuery);
   response.status(200);
-  response.send({ uploaded_date: afterResponse });
+  response.send({ uploaded_data: afterResponseData });
 });
 
 module.exports = app;
